@@ -8,8 +8,12 @@ jQuery ->
 			Duration: null
 			Description: ""
 			Activity: null
+		initialize: ->
+			_.bindAll @
 	class Log extends Backbone.Collection
 		model: LogEntry
+		initialize: ->
+			_.bindAll @
 			
 	class Project extends Backbone.Model
 		defaults:
@@ -19,7 +23,8 @@ jQuery ->
 			Title: "Sample Project"
 			Activities: []
 		initialize: ->
-			# @set "Log" new Log
+			_.bindAll @
+			@set "Log", new Log
 			console.log @get "Activities"
 		addActivity: (activity) ->
 			Activities = @get "Activities"
