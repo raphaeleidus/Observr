@@ -27,12 +27,13 @@ jQuery ->
 			_.bindAll @
 			@set "Log", new Log
 			console.log @get "Actions"
-		addAction: (activity) ->
+		addAction: (action) ->
 			Actions = @get "Actions"
-			Actions.push activity
-			@set "Actions", Actions
+			Actions.push action
+			@set 
+				Actions: Actions
 
-	class LoggingView extends Backbone.LoggingView
+	class LoggingView extends Backbone.View
 		el: $ "#Body"
 		initialize: ->
 			_.bindAll @
@@ -41,7 +42,7 @@ jQuery ->
 		Title: "Observer"
 		Actions:  ["Watch", "Listen", "Do"]
 
-	activity.addActivity "Snack"
+	activity.addAction "Snack"
 	console.log activity.get "Actions"
 # """
 console.log CoffeeScript.compile code
