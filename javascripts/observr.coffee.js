@@ -7,35 +7,41 @@ jQuery ->
 			End: null
 			Duration: null
 			Description: ""
-			Activity: null
+			Action: null
 		initialize: ->
 			_.bindAll @
+
 	class Log extends Backbone.Collection
 		model: LogEntry
 		initialize: ->
 			_.bindAll @
 			
-	class Project extends Backbone.Model
+	class Activity extends Backbone.Model
 		defaults:
 			StartClocktime: null
 			Start: null
 			Description: "Sample Description"
-			Title: "Sample Project"
-			Activities: []
+			Title: "Sample Activity"
+			Actions: []
 		initialize: ->
 			_.bindAll @
 			@set "Log", new Log
-			console.log @get "Activities"
-		addActivity: (activity) ->
-			Activities = @get "Activities"
-			Activities.push activity
-			@set "Activities", Activities
-	
-	project = new Project 
-		Title: "Observer"
-		Activities:  ["Watch", "Listen", "Do"]
+			console.log @get "Actions"
+		addAction: (activity) ->
+			Actions = @get "Actions"
+			Actions.push activity
+			@set "Actions", Actions
 
-	project.addActivity "Snack"
-	console.log project.get "Activities"
+	class LoggingView extends Backbone.LoggingView
+		el: $ "#Body"
+		initialize: ->
+			_.bindAll @
+	
+	activity = new Activity 
+		Title: "Observer"
+		Actions:  ["Watch", "Listen", "Do"]
+
+	activity.addActivity "Snack"
+	console.log activity.get "Actions"
 # """
 console.log CoffeeScript.compile code
