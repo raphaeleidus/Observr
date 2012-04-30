@@ -44,5 +44,6 @@ jQuery ->
 
 	activity.addAction "Snack"
 	console.log activity.get "Actions"
+	console.log window.templates
 # """
 console.log CoffeeScript.compile code
