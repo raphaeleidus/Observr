@@ -1,1 +1,2 @@
-console.log('This would be the main JS file.');
+var myDataReference = new Firebase('http://gamma.firebase.com/codercub/');
+myDataReference.set('I am now writing data into Firebase!');
