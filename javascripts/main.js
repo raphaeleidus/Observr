@@ -1,6 +1,7 @@
 $(function(){}
-	var DataSource = new Firebase('http://gamma.firebase.com/codercub/');
-	DataSource.set('I am now writing data into Firebase!');
-
+	var dataRef = new Firebase('http://gamma.firebase.com/codercub/');
+	dataRef.on('value', function(snapshot) {
+		console.log(snapshot);
+	});
 	console.log("done.");
 });
