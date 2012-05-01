@@ -13,7 +13,7 @@ $(function(){
 			this.on("all", this.reloadView, this);
 		},
 		reloadView: function() {
-			log.load();
+			observation.load();
 		}
 	});
 	var MoodLog = Backbone.Collection.extend({
@@ -24,12 +24,12 @@ $(function(){
 			this.on("all", this.reloadView, this);
 		},
 		reloadView: function() {
-			log.loadMood();
+			observation.loadMood();
 		}
 	});
 	moodLog = new MoodLog();
 	activityLog = new Log();
-	var LogEntryView = Backbone.View.extend({
+	var EntryView = Backbone.View.extend({
 		className: "logEntry",
 		template: _.template("<dt><% var d = new Date(Timestamp); print(d.toLocaleTimeString()); %></dt><dd><%= Title %></dd>"),
 		render: function() {
@@ -44,31 +44,39 @@ $(function(){
 			var that = this;
 			this.$el.empty().remove();
 			activityLog.each(function(logEntry){
-				var logEntryView = new LogEntryView({model: logEntry});
+				var logEntryView = new EntryView({model: logEntry});
 				that.$el.append(logEntryView.render());
 			});
 			return this;
-		},
-		renderMoods: function() {
+		}
+	});
+	var MoodView = Backbone.View.extend({
+		tagName:"dl",
+		className: "dl-horizontal",
+		render: function() {
 			var that = this;
-			//this.$el.empty().remove();
+			this.$el.empty().remove();
 			moodLog.each(function(moodEntry){
-				var moodEntryView = new MoodEntryView({model: moodEntry});
+				var moodEntryView = new EntryView({model: moodEntry, className: "moodEntry"});
 				that.$el.append(moodEntryView.render());
 			});
-			//return this;
-		},
+			return this;
+		}
+	})
+	var ObservationView = Backbone.View.extend({
 		initialize: function() {
+			this.logView = new LogView();
+			this.moodView = new MoodView();
 			_.bindAll(this, 'catchKey');
 			$(document).bind('keydown', this.catchKey);
 		},
 		load: function(){
 			$("#activitylog").empty();
-			$("#activitylog").append(this.render().el);
+			$("#activitylog").append(this.logView.render().el);
 		},
 		loadMood: function(){
 			$("#moodlog").empty();
-			$("#moodlog").append(this.renderMoods().el);
+			$("#moodlog").append(this.moodView.render().el);
 		},
 		catchKey: function(e) {
 			if (e.keyCode === 9) {
@@ -85,20 +93,20 @@ $(function(){
 				activityLog.create({Title: entry, Timestamp: time.toUTCString()});
 				activityLog.fetch();
 				console.log(time.toUTCString(), entry);
-				$("#activityField").val("")
-				;
+				$("#activityField").val("");
 			}
 			if (e.keyCode === 13 && e.target === $("#moodField")[0]) {
-				entry = $("#activityField").val();
-				time = new Date();
-				moodLog.create({Title: entry, Timestamp: time.toUTCString()});
-				//moodLog.fetch();
-				console.log(time.toUTCString(), entry);
-				$("#activityField").val("")
-				;
+				entry = $("#moodField").val();
+				if (entry.length > 2) {
+					time = new Date();
+					moodLog.create({Title: entry, Timestamp: time.toUTCString()});
+				}
+				moodLog.fetch();
+				$("#moodField").val("");
+				$("#activityField").focus();
 			}
 		}
 	});
-	var log = new LogView();
+	var observation = new ObservationView();
 	
 });
