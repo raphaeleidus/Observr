@@ -16,29 +16,41 @@ $(function(){
 	});
 	activityLog = new Log();
 	var LogEntryView = Backbone.View.extend({
-		tagName: "li",
-		className: "well logEntry",
-		template: _.template("<span class='label'><%= Timestamp %></span><span><%= Title %></span>"),
+		className: "logEntry",
+		template: _.template("<dt><%= Timestamp %></dt><dd><%= Title %></dd>"),
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this.$el;
 		}
 	});
 	var LogView = Backbone.View.extend({
-		tagName:"ul",
+		el: "body",
+		tagName:"dl",
+		className: "dl-horizontal",
 		render: function() {
 			var that = this;
-			this.$el.empty();
+			$("#activitylog").html("<dl class='dl-horizontal'></dl>");
 			activityLog.each(function(logEntry){
 				logEntryView = new LogEntryView({model: logEntry});
-				that.$el.append(logEntryView.render());
+				$("#activitylog dl").append(logEntryView.render());
 			});
 			return this.$el;
 		},
+		initialize: function() {
+			_.bindAll(this, 'addLogEntry');
+			$(document).bind('keypress', this.addLogEntry);
+
+		},
 		load: function(){
-			$("body").append(this.render());
+			this.render();
+		},
+		addLogEntry: function(e) {
+			if (e.keyCode === 13 && e.target === $("#activityField")[0] && $("#activityField").val().length > 3) {
+				entry = $("#activityField").val();
+				$("#activityField").val("");
+			}
 		}
 	});
-	var log = new LogView();
+	var log = new LogView({ el: $("body") });
 	
 });
