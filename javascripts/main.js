@@ -130,8 +130,19 @@ $(function(){
 					$("#activityField").focus();
 				}
 			} else if (e.keyCode === 13 && e.target === $("#activityField")[0] && $("#activityField").val().length > 3) {
-				entry = $("#activityField").val();
-				time = new Date();
+				var entry = $("#activityField").val();
+				var time = new Date();
+				var hasPrev = activityLog.length !== 0;
+				if (hasPrev) {
+					prev = activityLog.last();
+					prev = activityLog.get(prev.id);
+					prev.set("End", time.toUTCString());
+					oldTime = prev.get("Timestamp");
+					oldTime = new Date(oldTime);
+					duration = ((time - oldTime) / 1000) / 60;
+					prev.set("Duration", duration);
+					prev.save();
+				}
 				activityLog.create({Title: entry, Timestamp: time.toUTCString()});
 				activityLog.fetch();
 				console.log(time.toUTCString(), entry);
@@ -156,5 +167,6 @@ $(function(){
 		}
 	});
 	var observation = new ObservationView();
+	console.log("loaded!");
 	
 });

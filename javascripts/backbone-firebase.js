@@ -45,7 +45,7 @@
 
     _add: function(model) {
       var Collection = this.collection;
-      cmodel = new Collection.model(model.val());
+      var cmodel = new Collection.model(model.val());
       cmodel.id = model.name();
 
       Collection.add(cmodel);
@@ -61,10 +61,11 @@
     },
 
     child_changed: function(pushed_model) {
-      var model = this.collection.get(pushed_model.val());
+      var model = this.collection.get(pushed_model.name());
 
       if (model) {
         model = model.set(pushed_model.val());
+        model.id = pushed_model.name();
 
         this.trigger('remote_update', model);
 
@@ -109,10 +110,15 @@
         });
         break;
       case 'read':
-        ref.once('value', function (data) {
-          data = _.toArray(data.val());
-          if (options.success) options.success(data, "success", {});
-        });
+        var dataArray = [];
+        pushData = function(data) {
+          i = dataArray.length;
+          dataArray[i] = data.val();
+          dataArray[i].id = data.name();
+        }
+        ref.on('child_added', pushData);
+        ref.off('child_added', pushData);
+        if (options.success) options.success(dataArray, "success", {});
         break;
       case 'update':
         ref.set(model.toJSON(), function (success) {
