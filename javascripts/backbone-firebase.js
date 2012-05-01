@@ -45,17 +45,19 @@
 
     _add: function(model) {
       var Collection = this.collection;
-      model = new Collection.model(model.val());
+      cmodel = new Collection.model(model.val());
+      cmodel.id = model.name();
 
-      Collection.add(model);
-      this.trigger('remote_create', model);
+      Collection.add(cmodel);
+      this.trigger('remote_create', cmodel);
 
-      return model;
+      return cmodel;
     }
   });
 
   BackboneFirebase.defaultEvents = {
     child_added: function(pushed_model) {
+      var model = this.collection.get(pushed_model.name());
       return this._add(pushed_model);
     },
 

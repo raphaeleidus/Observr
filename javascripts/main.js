@@ -24,35 +24,38 @@ $(function(){
 		}
 	});
 	var LogView = Backbone.View.extend({
-		el: "body",
 		tagName:"dl",
 		className: "dl-horizontal",
 		render: function() {
 			var that = this;
-			$("#activitylog").html("<dl class='dl-horizontal'></dl>");
+			this.$el.empty().remove();
 			activityLog.each(function(logEntry){
-				logEntryView = new LogEntryView({model: logEntry});
-				$("#activitylog dl").append(logEntryView.render());
+				var logEntryView = new LogEntryView({model: logEntry});
+				that.$el.append(logEntryView.render());
 			});
-			return this.$el;
+			return this;
 		},
 		initialize: function() {
 			_.bindAll(this, 'addLogEntry');
 			$(document).bind('keypress', this.addLogEntry);
 		},
 		load: function(){
-			this.render();
+			$("#activitylog").empty();
+			$("#activitylog").append(this.render().el);
 		},
 		addLogEntry: function(e) {
+			console.log(e.type, e.keyCode);
 			if (e.keyCode === 13 && e.target === $("#activityField")[0] && $("#activityField").val().length > 3) {
 				entry = $("#activityField").val();
 				time = new Date();
 				activityLog.create({Title: entry, Timestamp: time.toUTCString()});
+				activityLog.fetch();
 				console.log(time.toUTCString(), entry);
-				$("#activityField").val("");
+				$("#activityField").val("")
+				;
 			}
 		}
 	});
-	var log = new LogView({ el: $("body") });
+	var log = new LogView();
 	
 });
