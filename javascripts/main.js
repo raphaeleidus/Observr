@@ -17,7 +17,7 @@ $(function(){
 	activityLog = new Log();
 	var LogEntryView = Backbone.View.extend({
 		className: "logEntry",
-		template: _.template("<dt><%= Timestamp %></dt><dd><%= Title %></dd>"),
+		template: _.template("<dt><% var d = new Date(Timestamp); print(d.toLocaleTimeString()); %></dt><dd><%= Title %></dd>"),
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this.$el;
@@ -39,7 +39,6 @@ $(function(){
 		initialize: function() {
 			_.bindAll(this, 'addLogEntry');
 			$(document).bind('keypress', this.addLogEntry);
-
 		},
 		load: function(){
 			this.render();
@@ -47,6 +46,9 @@ $(function(){
 		addLogEntry: function(e) {
 			if (e.keyCode === 13 && e.target === $("#activityField")[0] && $("#activityField").val().length > 3) {
 				entry = $("#activityField").val();
+				time = new Date();
+				activityLog.create({Title: entry, Timestamp: time.toUTCString()});
+				console.log(time.toUTCString(), entry);
 				$("#activityField").val("");
 			}
 		}
