@@ -57,7 +57,6 @@
 
   BackboneFirebase.defaultEvents = {
     child_added: function(pushed_model) {
-      var model = this.collection.get(pushed_model.name());
       return this._add(pushed_model);
     },
 
