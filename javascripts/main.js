@@ -57,6 +57,14 @@ $(function(){
 	var MoodEntryView = EntryView.extend({
 		className: "moodEntry"
 	});
+	var ShortLogEntryView = Backbone.View.extend({
+		tagName: "li",
+		template: _.template("<span class='label'><% if(Label != '') { print(Label) } else { print(Title) } %></span> - <%= Math.round(Duration*100)/100 %> min"),
+		render: function() {
+			$(this.el).html(this.template(this.model.toJSON()));
+			return this.$el;
+		}
+	});
 	var LogEntryView = EntryView.extend({
 		template: _.template("<dt><% var d = new Date(Timestamp); print(d.toLocaleTimeString()); %></dt><dd><%= Title %><% if(Label != '') { %> <span class='label'><%= Label %></span><% } %></dd>"),
 		events: {
@@ -106,6 +114,21 @@ $(function(){
 			return this;
 		}
 	});
+	var ShortLogView = LogView.extend({
+		tagName:"ul",
+		className: "unstyled",
+		render: function() {
+			var that = this;
+			this.$el.empty().remove();
+			activityLog.each(function(logEntry){
+				if(typeof(logEntry.get("Duration")) !== "undefined") {
+					var logEntryView = new ShortLogEntryView({model: logEntry});
+					that.$el.append(logEntryView.render());
+				}
+			});
+			return this;
+		}
+	});
 	var MoodView = Backbone.View.extend({
 		tagName:"dl",
 		className: "dl-horizontal",
@@ -133,6 +156,7 @@ $(function(){
 	var ObservationView = Backbone.View.extend({
 		initialize: function() {
 			this.logView = new LogView();
+			this.shortLogView = new ShortLogView();
 			this.moodView = new MoodView();
 			this.labelView = new LabelsView();
 			_.bindAll(this, 'catchKey');
@@ -140,7 +164,9 @@ $(function(){
 		},
 		load: function(){
 			$("#activitylog").empty();
+			$("#shortLog").empty();
 			$("#activitylog").append(this.logView.render().el);
+			$("#shortLog").append(this.shortLogView.render().el);
 		},
 		loadMood: function(){
 			$("#moodlog").empty();
