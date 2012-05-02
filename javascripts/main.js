@@ -59,7 +59,7 @@ $(function(){
 	});
 	var ShortLogEntryView = Backbone.View.extend({
 		tagName: "li",
-		template: _.template("<span class='label'><% if(Label != '') { print(Label) } else { print(Title) } %></span> - <%= Math.round(Duration*100)/100 %> min"),
+		template: _.template("<span rel='tooltip' title='<%= Title %>' class='label'><% if(Label != '') { print(Label) } else { print(Title) } %></span> - <%= Math.round(Duration*100)/100 %> min"),
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this.$el;
@@ -167,6 +167,7 @@ $(function(){
 			$("#shortLog").empty();
 			$("#activitylog").append(this.logView.render().el);
 			$("#shortLog").append(this.shortLogView.render().el);
+			$("#shortLog ul li span").tooltip();
 		},
 		loadMood: function(){
 			$("#moodlog").empty();
