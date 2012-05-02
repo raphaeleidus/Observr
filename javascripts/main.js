@@ -3,11 +3,11 @@ $(function(){
 		defaults: {active: true, Label: ""}
 	});
 	var MoodEntry = Backbone.Model.extend({
-
 	});
 	var ActivityLabel= Backbone.Model.extend({
-
 	});
+	var Note = Backbone.Model.extend({
+	})
 
 	var Labels = Backbone.Collection.extend({
 		model: ActivityLabel,
@@ -42,9 +42,21 @@ $(function(){
 			observation.loadMood();
 		}
 	});
+	var Notes = Backbone.Collection.extend({
+		model: Note,
+		url: "/notes",
+		initialize: function() {
+			this.backboneFirebase = new BackboneFirebase(this);
+			this.on("all", this.reloadView, this)
+		},
+		reloadView: function() {
+			analysis.loadNotes();
+		}
+	})
 	moodLog = new MoodLog();
 	activityLog = new Log();
 	labels = new Labels();
+	notes = new Notes();
 	activeLabel = null;
 	var EntryView = Backbone.View.extend({
 		className: "logEntry",
@@ -159,7 +171,18 @@ $(function(){
 			this.shortLogView = new ShortLogView();
 		},
 		events: {
-			"click .tabbable .nav a": "load"
+			"click .tabbable .nav a": "load",
+			"click #notesSave": "saveNotes",
+		},
+		saveNotes: function() {
+			if(notes.length === 0) {
+				notes.create({text:$("#notesTextarea").val()});
+			} else {
+				notes.at(0).save({text:$("#notesTextarea").val()});
+			}
+		},
+		loadNotes: function() {
+			$("#notesTextarea").val(notes.at(0).get("text"));
 		},
 		load: _.throttle(function() {
 			$("#shortLog").empty();
