@@ -18,12 +18,16 @@
 
     <title>Observr Demo</title>
   </head>
-  <body id="Body"> 
+  <body id="Body">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand">Observr</a>
+        </div>
+      </div>
+    </div> 
     <div class="container-fluid">
       <div class="row-fluid">
-    		<div class="span12 well">
-            <h1>Observr</h1>
-        </div>
           <div class="tabbable">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#observation" data-toggle="tab">Observation</a></li>
@@ -74,8 +78,12 @@
                         <div id="breakdownGraph"></div>
                       </div>
                       <div class="span8">
-                        <h4>Activity Notes</h4>
-                        <div class="well"></div>
+                        <div class="well">
+                          <h4>Activity Notes</h4>
+                          <textarea rows="9" class="span12" id="notesTextarea"></textarea>
+                          <div class="clearfix"><button id="notesSave" class="btn btn-primary" type="submit">Save changes</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     </div>
