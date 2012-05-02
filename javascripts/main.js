@@ -18,6 +18,7 @@ $(function(){
 		},
 		reloadView: function() {
 			observation.loadLabels();
+			analysis.load();
 		}
 	})
 	var Log = Backbone.Collection.extend({
@@ -29,6 +30,7 @@ $(function(){
 		},
 		reloadView: function() {
 			observation.load();
+			analysis.load();
 		}
 	});
 	var MoodLog = Backbone.Collection.extend({
@@ -153,10 +155,63 @@ $(function(){
 			return this;
 		}
 	});
+	var AnalysisView = Backbone.View.extend({
+		initialize: function() {
+			this.shortLogView = new ShortLogView();
+		},
+		load: _.throttle(function() {
+			$("#shortLog").empty();
+			$("#shortLog").append(this.shortLogView.render().el);
+			$("#shortLog ul li span").tooltip();
+			var labelsArray = labels.pluck("Name");
+			var labelsMap = {};
+			var timeTotal = 0;
+			_.each(labelsArray, function(label) {
+				labelsMap[label] = 0;
+			});
+			var timedActivities = activityLog.map(function(logEntry){ 
+				return {Duration: logEntry.get("Duration"), Label: logEntry.get("Label")};
+			});
+			_.each(timedActivities, function(item) {
+				if(typeof(item.Label) !== "undefined" && typeof(labelsMap[item.Label]) !== "undefined" && typeof(item.Duration) !== "undefined") {
+					labelsMap[item.Label] += item.Duration;
+					timeTotal += item.Duration;
+				}
+			});
+			var labelsPieStats = [];
+			_.each(labelsArray, function(label) {
+				labelsPieStats.push({name: label, y: Math.round(labelsMap[label]*100)/100});
+			});
+			chart = new Highcharts.Chart({
+				chart: {
+					renderTo: 'breakdownGraph'
+				},
+				title: { text: "Activity Breakdown" },
+				tooltip: {
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage*100)/100 +' %';
+					}
+				},
+				plotOptions: {
+					pie: {
+						allowPointSelect: true,
+						cursor: 'pointer',
+						dataLabels: {
+							enabled: false
+						},
+						showInLegend: true
+					}
+				},
+				series: [{
+					type: 'pie',
+					data: labelsPieStats
+				}]
+			});
+		}, 300)
+	})
 	var ObservationView = Backbone.View.extend({
 		initialize: function() {
 			this.logView = new LogView();
-			this.shortLogView = new ShortLogView();
 			this.moodView = new MoodView();
 			this.labelView = new LabelsView();
 			_.bindAll(this, 'catchKey');
@@ -164,10 +219,7 @@ $(function(){
 		},
 		load: function(){
 			$("#activitylog").empty();
-			$("#shortLog").empty();
 			$("#activitylog").append(this.logView.render().el);
-			$("#shortLog").append(this.shortLogView.render().el);
-			$("#shortLog ul li span").tooltip();
 		},
 		loadMood: function(){
 			$("#moodlog").empty();
@@ -179,12 +231,14 @@ $(function(){
 		},
 		catchKey: function(e) {
 			if (e.keyCode === 9) {
-				e.preventDefault();
 				if(e.target === $("#activityField")[0]) {
+					e.preventDefault();
 					$("#moodField").focus();
 				} else if(e.target === $("#moodField")[0]) {
+					e.preventDefault();
 					$("#activityField").focus();
 				} else if(e.target === $("#labelField")[0]) {
+					e.preventDefault();
 					$("#activityField").focus();
 				}
 			} else if (e.keyCode === 13 && e.target === $("#activityField")[0] && $("#activityField").val().length > 3) {
@@ -225,6 +279,7 @@ $(function(){
 		}
 	});
 	var observation = new ObservationView();
+	var analysis = new AnalysisView();
 	console.log("loaded!");
 	
 });
