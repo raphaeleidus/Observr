@@ -1,6 +1,6 @@
 $(function(){
 	var LogEntry = Backbone.Model.extend({
-		defaults: {active: true}
+		defaults: {active: true, Label: ""}
 	});
 	var MoodEntry = Backbone.Model.extend({
 
@@ -45,6 +45,7 @@ $(function(){
 	moodLog = new MoodLog();
 	activityLog = new Log();
 	labels = new Labels();
+	activeLabel = null;
 	var EntryView = Backbone.View.extend({
 		className: "logEntry",
 		template: _.template("<dt><% var d = new Date(Timestamp); print(d.toLocaleTimeString()); %></dt><dd><%= Title %></dd>"),
@@ -53,13 +54,43 @@ $(function(){
 			return this.$el;
 		}
 	});
+	var MoodEntryView = EntryView.extend({
+		className: "moodEntry"
+	});
+	var LogEntryView = EntryView.extend({
+		template: _.template("<dt><% var d = new Date(Timestamp); print(d.toLocaleTimeString()); %></dt><dd><%= Title %><% if(Label != '') { %> <span class='label'><%= Label %></span><% } %></dd>"),
+		events: {
+			"click": "label"
+		},
+		label: function(){
+			if(activeLabel != null) {
+				this.model.set("Label", activeLabel.model.get("Name"));
+				this.model.save();
+			}
+		}
+	});
 	var LabelView = Backbone.View.extend({
 		className: "label",
 		tagName: "span",
 		template: _.template("<%= Name %>"),
+		events: {
+			"click": "select"
+		},
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this.$el;
+		},
+		select: function() {
+			if(activeLabel != null) {
+				activeLabel.$el.removeClass("btn-primary");
+			}
+			if(activeLabel != this) {
+				activeLabel = this;
+				this.$el.addClass("btn-primary");
+			} else {
+				activeLabel == null;
+			}
+			
 		}
 	});
 	var LogView = Backbone.View.extend({
@@ -69,7 +100,7 @@ $(function(){
 			var that = this;
 			this.$el.empty().remove();
 			activityLog.each(function(logEntry){
-				var logEntryView = new EntryView({model: logEntry});
+				var logEntryView = new LogEntryView({model: logEntry});
 				that.$el.append(logEntryView.render());
 			});
 			return this;
@@ -82,7 +113,7 @@ $(function(){
 			var that = this;
 			this.$el.empty().remove();
 			moodLog.each(function(moodEntry){
-				var moodEntryView = new EntryView({model: moodEntry, className: "moodEntry"});
+				var moodEntryView = new MoodEntryView({model: moodEntry});
 				that.$el.append(moodEntryView.render());
 			});
 			return this;
