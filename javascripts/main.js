@@ -18,7 +18,6 @@ $(function(){
 		},
 		reloadView: function() {
 			observation.loadLabels();
-			analysis.load();
 		}
 	})
 	var Log = Backbone.Collection.extend({
@@ -30,7 +29,6 @@ $(function(){
 		},
 		reloadView: function() {
 			observation.load();
-			analysis.load();
 		}
 	});
 	var MoodLog = Backbone.Collection.extend({
@@ -156,31 +154,40 @@ $(function(){
 		}
 	});
 	var AnalysisView = Backbone.View.extend({
+		el: "body",
 		initialize: function() {
 			this.shortLogView = new ShortLogView();
+		},
+		events: {
+			"click .tabbable .nav a": "load"
 		},
 		load: _.throttle(function() {
 			$("#shortLog").empty();
 			$("#shortLog").append(this.shortLogView.render().el);
-			$("#shortLog ul li span").tooltip();
+			$("#shortLog ul li span").tooltip({placement: "right"});
 			var labelsArray = labels.pluck("Name");
-			var labelsMap = {};
+			var labelsTimeMap = {};
+			var labelsMap = {}
 			var timeTotal = 0;
-			_.each(labelsArray, function(label) {
-				labelsMap[label] = 0;
-			});
+			var activityData = [];
+			for (var i = 0; i < labelsArray.length; i++) {
+				labelsTimeMap[labelsArray[i]] = 0;
+				labelsMap[labelsArray[i]] = i;
+			};
 			var timedActivities = activityLog.map(function(logEntry){ 
 				return {Duration: logEntry.get("Duration"), Label: logEntry.get("Label")};
 			});
 			_.each(timedActivities, function(item) {
-				if(typeof(item.Label) !== "undefined" && typeof(labelsMap[item.Label]) !== "undefined" && typeof(item.Duration) !== "undefined") {
-					labelsMap[item.Label] += item.Duration;
+				if(typeof(item.Label) !== "undefined" && typeof(labelsTimeMap[item.Label]) !== "undefined" && typeof(item.Duration) !== "undefined") {
+					labelsTimeMap[item.Label] += item.Duration;
+					activityData.push({x:timeTotal, y:labelsMap[item.Label], name: item.Label});
 					timeTotal += item.Duration;
+					activityData.push({x:timeTotal, y:labelsMap[item.Label], name: item.Label});
 				}
 			});
 			var labelsPieStats = [];
 			_.each(labelsArray, function(label) {
-				labelsPieStats.push({name: label, y: Math.round(labelsMap[label]*100)/100});
+				labelsPieStats.push({name: label, y: Math.round(labelsTimeMap[label]*100)/100});
 			});
 			chart = new Highcharts.Chart({
 				chart: {
@@ -207,6 +214,26 @@ $(function(){
 					data: labelsPieStats
 				}]
 			});
+			var activitychart = new Highcharts.Chart({
+				chart: { renderTo: 'activityGraph'},
+				title: { text: "Activity Graph" },
+				legend: {enabled: false},
+				tooltip: {
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>';
+					}
+				},
+				yAxis: {
+					title: {text: 'Labels'},
+					categories: labelsArray
+				},
+				xAxis: {title: {text:"Minutes"}},
+				series: [{
+            		name: "Activity",
+                    data: activityData
+                }]
+			});
+			console.log(JSON.stringify(activityData));
 		}, 300)
 	})
 	var ObservationView = Backbone.View.extend({
