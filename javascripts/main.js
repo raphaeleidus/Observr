@@ -180,9 +180,9 @@ $(function(){
 			_.each(timedActivities, function(item) {
 				if(typeof(item.Label) !== "undefined" && typeof(labelsTimeMap[item.Label]) !== "undefined" && typeof(item.Duration) !== "undefined") {
 					labelsTimeMap[item.Label] += item.Duration;
-					activityData.push({x:timeTotal, y:labelsMap[item.Label], name: item.Label});
+					activityData.push({x:timeTotal, y:labelsMap[item.Label], name: item.Label, size: item.Duration});
 					timeTotal += item.Duration;
-					activityData.push({x:timeTotal, y:labelsMap[item.Label], name: item.Label});
+					activityData.push({x:timeTotal, y:labelsMap[item.Label], name: item.Label, size: item.Duration});
 				}
 			});
 			var labelsPieStats = [];
@@ -214,13 +214,13 @@ $(function(){
 					data: labelsPieStats
 				}]
 			});
-			var activitychart = new Highcharts.Chart({
+			activitychart = new Highcharts.Chart({
 				chart: { renderTo: 'activityGraph'},
 				title: { text: "Activity Graph" },
 				legend: {enabled: false},
 				tooltip: {
 					formatter: function() {
-						return '<b>'+ this.point.name +'</b>';
+						return '<b>'+ this.point.name +'</b> - ' + Math.round(this.point.size*100)/100 + ' min';
 					}
 				},
 				yAxis: {
@@ -233,7 +233,6 @@ $(function(){
                     data: activityData
                 }]
 			});
-			console.log(JSON.stringify(activityData));
 		}, 300)
 	})
 	var ObservationView = Backbone.View.extend({
