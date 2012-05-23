@@ -161,6 +161,7 @@ $(function(){
 			labels.each(function(label){
 				var labelView = new LabelView({model: label});
 				that.$el.append(labelView.render());
+				that.$el.append(" ");
 			});
 			return this;
 		}
