@@ -108,7 +108,7 @@ $(function(){
 				activeLabel = this;
 				this.$el.addClass("btn-primary");
 			} else {
-				activeLabel == null;
+				activeLabel = null;
 			}
 			
 		}
