@@ -16,5 +16,7 @@ Start using [Observr](http://raphaeleiduz.github.com/Observr/demo.html)
 In interface design there is often a give and take between productivity and intuitivity. Observr was designed to be incredibly productive so concessions were made to the inuitiveness, this resulted in a great product that when someone new sits down to use it, they dont really know what is going on. 
 
 ## Using the Observr interface ##
-1. **Observation Tab**
-2. **Analysis Tab**
+*   **Observation Tab**
+      The Observation page has three panels: Activity Log, Mood Log, and Activity Label. The primary panel is the Activity Log. 
+   *   Use the text box at the right to note down every action your subject takes, timestamps will be added automatically and used to determine the duration of each action 
+*   **Analysis Tab**
