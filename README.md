@@ -22,5 +22,5 @@ In interface design there is often a give and take between productivity and intu
    *   If at any time, the subjects mood is noteworthy, simply hit tab and you will target the Mood Log entry field. After entering a mood your cursor will be taken back to the Activity Log immediately.  
    *   In order to properly analyze the activity the log needs to be formalized by assigning labels to every log entry. Do this by first deciding what the base labels are (For example if you are observing a subject writing a research paper and there are activities, "Searching for John Clease", "Searching for Graham Chapman", "Searching for The Holy Grail" these might all be labeled simply "Web Search").  
    *   Once you have some labels created you can start applying them to the entries in the list. Do this by click on a label to activate it, then click on any items in the Activity Log to apply the labels.
-*   **Analysis Tab**
+*   **Analysis Tab**  
       The Analysis Tab has four areas to it. Three represent the information and the fourth is for taking notes.
