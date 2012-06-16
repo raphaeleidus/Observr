@@ -12,9 +12,6 @@ Observr has two main sections, Observation and Analysis. With other forms of obs
 ## Where can I use Observr ##
 Start using [Observr](http://raphaeleiduz.github.com/Observr/demo.html) 
 
-## The interface is confusing ##
-In interface design there is often a give and take between productivity and intuitivity. Observr was designed to be incredibly productive so concessions were made to the inuitiveness, this resulted in a great product that when someone new sits down to use it, they dont really know what is going on. 
-
 ## Using the Observr interface ##
 *   **Observation Tab**  
       The Observation page has three panels: Activity Log, Mood Log, and Activity Label. The primary panel is the Activity Log. 
@@ -24,3 +21,6 @@ In interface design there is often a give and take between productivity and intu
    *   Once you have some labels created you can start applying them to the entries in the list. Do this by click on a label to activate it, then click on any items in the Activity Log to apply the labels.
 *   **Analysis Tab**  
       The Analysis Tab has four areas to it. Three represent the information and the fourth is for taking notes.
+
+## The interface is confusing ##
+In interface design there is often a give and take between productivity and intuitivity. Observr was designed to be incredibly productive so concessions were made to the inuitiveness, this resulted in a great product that when someone new sits down to use it, they dont really know what is going on. 
