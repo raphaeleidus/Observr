@@ -10,10 +10,10 @@
 (function(exports, undefined){
 
   // Note: Add your appname to the end of this string
-  var urlPrefix = 'http://gamma.firebase.com/codercub/';
+  var urlPrefix = 'burning-torch-6969.firebaseio.com';
 
   var BackboneFirebase = function(collection, options) {
-
+    console.log(urlPrefix+collection.url);
     this.reference = new Firebase(urlPrefix + collection.url);
     this.collection = collection;
     this.options = (options || {});

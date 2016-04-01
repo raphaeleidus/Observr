@@ -1,4 +1,14 @@
 $(function(){
+	var hashMatches = document.location.hash.match(/id=([^&]*)/);
+	$(window).bind('hashchange', function() {
+		location.reload();
+	});
+	if(!hashMatches) {
+		document.location.hash = '#id='+ Math.random().toString(36).replace(/[^a-z\-]+/g, '').substr(0, 8);
+	}
+	var test_id = hashMatches[1];
+
+
 	var LogEntry = Backbone.Model.extend({
 		defaults: {active: true, Label: ""}
 	});
@@ -7,11 +17,11 @@ $(function(){
 	var ActivityLabel= Backbone.Model.extend({
 	});
 	var Note = Backbone.Model.extend({
-	})
+	});
 
 	var Labels = Backbone.Collection.extend({
 		model: ActivityLabel,
-		url: "/labels",
+		url: "/"+test_id+"/labels",
 		initialize: function() {
 			this.backboneFirebase = new BackboneFirebase(this);
 			this.on("all", this.reloadView, this);
@@ -22,7 +32,7 @@ $(function(){
 	})
 	var Log = Backbone.Collection.extend({
 		model: LogEntry,
-		url: "/log",
+		url: "/"+test_id+"/log",
 		initialize: function() {
 			this.backboneFirebase = new BackboneFirebase(this);
 			this.on("all", this.reloadView, this);
@@ -33,7 +43,7 @@ $(function(){
 	});
 	var MoodLog = Backbone.Collection.extend({
 		model: MoodEntry,
-		url: "/moodLog",
+		url: "/"+test_id+"/moodLog",
 		initialize: function() {
 			this.backboneFirebase = new BackboneFirebase(this);
 			this.on("all", this.reloadView, this);
@@ -44,7 +54,7 @@ $(function(){
 	});
 	var Notes = Backbone.Collection.extend({
 		model: Note,
-		url: "/notes",
+		url: "/"+test_id+"/notes",
 		initialize: function() {
 			this.backboneFirebase = new BackboneFirebase(this);
 			this.on("all", this.reloadView, this)
@@ -52,12 +62,14 @@ $(function(){
 		reloadView: function() {
 			analysis.loadNotes();
 		}
-	})
-	moodLog = new MoodLog();
-	activityLog = new Log();
-	labels = new Labels();
-	notes = new Notes();
-	activeLabel = null;
+	});
+
+	var moodLog = new MoodLog();
+  var activityLog = new Log();
+  var labels = new Labels();
+  var notes = new Notes();
+  var activeLabel = null;
+
 	var EntryView = Backbone.View.extend({
 		className: "logEntry",
 		template: _.template("<dt><% var d = new Date(Timestamp); print(d.toLocaleTimeString()); %></dt><dd><%= Title %></dd>"),
@@ -297,7 +309,6 @@ $(function(){
 				var hasPrev = activityLog.length !== 0;
 				if (hasPrev) {
 					prev = activityLog.last();
-					prev = activityLog.get(prev.id);
 					prev.set("End", time.toUTCString());
 					oldTime = prev.get("Timestamp");
 					oldTime = new Date(oldTime);
